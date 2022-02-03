@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+        <script src="//code.jquery.com/jquery-1.12.4.js"></script>
+        <script src="//code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+        <title>MongoDB Homepage</title>
+    
+    </head>
+    <body>
+       
+
+
+        <nav class="header">
+          <br><br><br><br><br><br><br><br><br><br>
+          </nav>
+          <div align="center" class="mongo-logo">
+            <img src="https://webimages.mongodb.com/_com_assets/cms/Atlas%20Search_Hero-8spu2tlacs.png?auto=format%2Ccompress&ch=DPR"  width="25%" height="25%" alt="mongodb-logo" title="mongodb-logo ">
+          </div>
+          <div>
+            <br><br>
+            <div align="center" class="ui-widget">
+                <label for="teology">theology & religious book search engine</label><br />
+                <input id="teology" size="70">
+                
+                <ul id="Name"></ul>
+                <ul id="Title"></ul>
+                <ul id="Topic"></ul>
+                <ul id="ISBN"></ul>
+            </div>
+      
+          </br>
+          <div align="center" class="footer">
+            <a href="https://docs.atlas.mongodb.com/atlas-search/">Powered by Atlas search</a></a>
+          </div>
+
+        <script>
+            $(document).ready(function () {});
+        </script>
+    </body>
+</html>
+
+<!DOCTYPE html>
+<html>
+
+ 
+
+
+<script>
+    $(document).ready(function () {
+        $("#teology").autocomplete({
+            source: async function(request, response) {
+                let data = await fetch(`http://localhost:3000/search?query=${request.term}`)
+                    .then(results => results.json())
+                    .then(results => results.map(result => {
+                        return { label: result.Title, value: result.Title, id: result._id };
+                    }));
+                response(data);
+            },
+            minLength: 2,
+            select: function(event, ui) {
+                fetch(`http://localhost:3000/get/${ui.item.id}`)
+                    .then(result => result.json())
+                      .then(result => {
+                        $("#Name").empty();
+                             $("#Name").append(`NAME --> ${result.Name}`);
+                             $("#Title").append(`TITLE --> ${result.Title}`);
+                             $("#Topic").append(`TOPIC --> ${result.Topic}`);
+                             $("#ISBN").append(`ISBN --> ${result.ISBN}`);
+                            
+                    });
+            }
+        });
+    });
+</script>
